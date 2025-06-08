@@ -60,16 +60,37 @@ export default class StudentController {
   };
   getAllStudent = async (req: Request, res: Response): Promise<void> => {
     try {
-      const students = await prisma.user.findMany({
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          status: true,
+      const page = parseInt(req.query?.page as string) || 1;
+      const limit = parseInt(req.query?.limit as string) || 10;
+      const sortBy = (req.query?.sortBy as string) || "name";
+      const sortOrder = (req.query?.sortOrder as "asc" | "desc") || "asc";
+      const allowedSortBy = ["id", "name", "email", "status"];
+      if (!allowedSortBy.includes(sortBy)) {
+        res
+          .status(400)
+          .json({ success: false, message: "Invalid sortBy parameter." });
+      }
+      const skip = (page - 1) * limit;
+      const [students, total] = await prisma.$transaction([
+        prisma.user.findMany({
+          skip: skip,
+          take: limit,
+          orderBy: {
+            [sortBy]: sortOrder,
+          },
+        }),
+        prisma.user.count(),
+      ]);
+      res.status(200).json({
+        success: true,
+        data: students,
+        pagination: {
+          total,
+          limit,
+          page,
+          totalPages: Math.ceil(total / limit),
         },
       });
-
-      res.status(200).json({ success: true, data: students });
     } catch (error) {
       console.error(error);
       res.status(500).json({
