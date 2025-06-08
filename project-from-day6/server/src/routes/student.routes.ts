@@ -12,4 +12,8 @@ router.get("/status/:status", (req: Request, res: Response) => {
 router.post("/add", (req: Request, res: Response) => {
   return studentController.addStudent(req, res, req.body);
 });
+
+router.get("/", (req: Request, res: Response) => {
+  return studentController.getAllStudent(req, res);
+});
 export default router;

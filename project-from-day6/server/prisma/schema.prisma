@@ -28,4 +28,5 @@ enum StudentStatus {
   VISA_LODGE
   NEW
   ONGOING
+  ALL
 }

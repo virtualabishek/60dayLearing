@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `User` MODIFY `status` ENUM('COMPLETED', 'VISA_LODGE', 'NEW', 'ONGOING', 'ALL') NOT NULL;

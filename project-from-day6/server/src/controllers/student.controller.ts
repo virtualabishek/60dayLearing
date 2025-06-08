@@ -58,4 +58,24 @@ export default class StudentController {
       res.status(500).json({ success: false, message: "Cannot Create" });
     }
   };
+  getAllStudent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const students = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          status: true,
+        },
+      });
+
+      res.status(200).json({ success: true, data: students });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching students",
+      });
+    }
+  };
 }
